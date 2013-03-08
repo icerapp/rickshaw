@@ -5,7 +5,7 @@ Rickshaw.Graph.Behavior.Series.Toggle = function(args) {
 	this.graph = args.graph;
 	this.legend = args.legend;
 
-	this.sortable = args.sortable == undefined ? true : args.sortable;
+	this.sortable = args.sortable === undefined ? true : args.sortable;
 
 	var self = this;
 
@@ -89,7 +89,7 @@ Rickshaw.Graph.Behavior.Series.Toggle = function(args) {
 						ui.item.unbind('no.onclick');
 					}, 250);
 				}
-			})
+			});
 		}
 
 		this.legend.lines.forEach( function(l) {
