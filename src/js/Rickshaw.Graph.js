@@ -6,6 +6,7 @@ Rickshaw.Graph = function(args) {
 
 	this.element = args.element;
 	this.series = args.series;
+    this._dataDomain = [0, 0];
 
 	this.defaults = {
 		interpolation: 'cardinal',
@@ -29,6 +30,8 @@ Rickshaw.Graph = function(args) {
 		this.validateSeries(args.series);
 
 		this.series.active = function() { return self.series.filter( function(s) { return !s.disabled } ) };
+
+        this.discoverDataDomain();
 
 		this.setSize({ width: args.width, height: args.height });
 
@@ -88,13 +91,25 @@ Rickshaw.Graph = function(args) {
 	};
 
 	this.dataDomain = function() {
-
-		// take from the first series
-		var data = this.series[0].data;
-
-		return [ data[0].x, data.slice(-1).shift().x ];
-
+        return this._dataDomain;
 	};
+
+    this.discoverDataDomain = function() {
+        var xMin = this.series[0].data[0].x;
+        var xMax = xMin;
+
+        this.series.forEach( function(s) {
+
+            s.data.forEach( function(d) {
+                if (d.x < xMin) xMin = d.x;
+                if (d.x > xMax) xMax = d.x;
+            } );
+
+        } );
+
+        this._dataDomain[0] = xMin;
+        this._dataDomain[1] = xMax;
+    };
 
 	this.discoverRange = function() {
 
@@ -110,6 +125,8 @@ Rickshaw.Graph = function(args) {
 	};
 
 	this.render = function() {
+
+        this.discoverDataDomain();
 
 		var stackedData = this.stackData();
 		this.discoverRange();
